@@ -48,6 +48,10 @@ def create_order(symbol, side, qty, trailing_stop):
     response = requests.post(url, headers=headers, json=body)
     return response.json()
 
+@app.route("/", methods=["GET"])
+def home():
+    return "Bot is running!", 200
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
     data = request.json
@@ -55,8 +59,8 @@ def webhook():
 
     symbol = data.get("symbol", "ETHUSDT")
     side = "Buy" if data["signal"] == "buy" else "Sell"
-    qty = 0.01  # Παράδειγμα ποσότητας
-    trailing_stop = "2"  # Απόσταση σε $
+    qty = 0.01
+    trailing_stop = "2"
 
     result = create_order(symbol, side, qty, trailing_stop)
     return jsonify(result)
