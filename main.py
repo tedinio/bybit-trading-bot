@@ -4,11 +4,10 @@ import hmac
 import hashlib
 import time
 import json
-import os
 
 app = Flask(__name__)
 
-# Φόρτωση ρυθμίσεων
+# Load config
 with open("config.json") as f:
     config = json.load(f)
 
@@ -40,7 +39,7 @@ def create_order(symbol, side, qty, trailing_stop):
         "Content-Type": "application/json"
     }
 
-    # Υπογραφή
+    # Signature
     param_str = timestamp + API_KEY + "5000" + json.dumps(body)
     sign = hmac.new(API_SECRET.encode("utf-8"), param_str.encode("utf-8"), hashlib.sha256).hexdigest()
     headers["X-BAPI-SIGN"] = sign
@@ -60,7 +59,7 @@ def webhook():
     symbol = data.get("symbol", "ETHUSDT")
     side = "Buy" if data["signal"] == "buy" else "Sell"
     qty = 0.01
-    trailing_stop = "2"
+    trailing_stop = "2"  # σε USDT
 
     result = create_order(symbol, side, qty, trailing_stop)
     return jsonify(result)
